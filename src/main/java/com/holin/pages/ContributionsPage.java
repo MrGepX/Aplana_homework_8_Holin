@@ -8,7 +8,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
-
 import java.util.List;
 
 public class ContributionsPage extends BasePage {
@@ -18,14 +17,14 @@ public class ContributionsPage extends BasePage {
     @FindBy (xpath =  "//input[@type='text' and @name = 'amount']")
     WebElement amount;
 
-    @FindBy (xpath = "//div [@class='jq-selectbox__select-text']")
+    @FindBy (xpath = "//select[@class='calculator__slide-input js-slide-value']")
     WebElement timeChoose;
 
     @FindBy (xpath = "//input [@name='replenish']")
     WebElement monthAdding;
 
     @FindBy (xpath = "//div[@class='calculator__check-row-field']")
-    List<WebElement> checkersOnList;
+    List<WebElement> checkersOnPage;
 
     @FindBy (xpath = "//span [@class = 'js-calc-rate']")
     WebElement rateElement;
@@ -33,11 +32,17 @@ public class ContributionsPage extends BasePage {
     @FindBy (xpath = "//span[@class=\"calculator__check-block-input\"]//div//input[@name= 'deposit_b_n_tab']")
     WebElement bottom;
 
-    @FindBy (xpath = "//span [@class = 'js-calc-result']")
+    @FindBy (xpath = "//span [@class='js-calc-result']")
     WebElement accured;
 
+    @FindBy (xpath = "//span [@class='js-calc-replenish']")
+    WebElement replenish;
+
+    @FindBy (xpath = "//span [@class='js-calc-earned']")
+    WebElement income;
+
     @Step ("Выбираем валюту")
-    public void chooseTypeOfCurrency() { //TODO Выбор валюты
+    public void chooseTypeOfCurrency() {
         wait.until(ExpectedConditions.visibilityOf(accured));
         chooseCurrency.click();
     }
@@ -56,8 +61,7 @@ public class ContributionsPage extends BasePage {
         setCurrentValue();
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(false);", timeChoose);
         Select select = new Select(timeChoose);
-        System.out.println(select.getAllSelectedOptions());
-        select.selectByValue(value);
+        select.selectByValue(value.replaceAll("[^0-9]", ""));
         waitForChanges(accured, currentMonthValue);
     }
 
@@ -70,39 +74,39 @@ public class ContributionsPage extends BasePage {
         waitForChanges(accured, currentMonthValue);
     }
 
-    @Step ("Отметить – Ежемесячная капитализация") //TODO
-    public void checkCapitalization(String nameChecker) {
+    @Step ("Отметить – Ежемесячная капитализация")
+    public void clickByCheckerFunction(String nameChecker) {
         setCurrentValue();
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(false);", bottom);
-        for (WebElement element : checkersOnList) {
-            WebElement nameOfCheker = element.findElement(By.xpath(".//span[@class='calculator__check-text']"));
-            if (nameOfCheker.getText().equalsIgnoreCase(nameChecker)) {
+        for (WebElement element : checkersOnPage) {
+            WebElement currentChecker = element.findElement(By.xpath(".//span[@class='calculator__check-text']"));
+            if (currentChecker.getText().equalsIgnoreCase(nameChecker)) {
                 WebElement elementClick = element.findElement(By.xpath(".//span[@class=\"calculator__check-block-input\"]"));
                 elementClick.click();
-                waitForChanges(element, currentMonthValue);
+                waitForChanges(accured, currentMonthValue);
+                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(false);", chooseCurrency);
                 return;
             }
         }
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(false);", amount);
     }
 
     @Step ("Проверить расчеты по вкладу - Ставка {rate}")
     public void checkTheRate(double rate) {
-        Assert.assertTrue(rate == formatString(rateElement.getText()));
+        Assert.assertEquals(rate, formatString(rateElement.getText()), 0.0);
     }
 
     @Step ("Проверить расчеты по вкладу - К снятию через месяц {withdraw}")
-    public void checkTheWithdraw (double withdraw) {
-
+    public void checkTheWithdraw (String withdraw) {
+        Assert.assertEquals(withdraw, accured.getText().replaceAll("\\s",""));
     }
 
     @Step ("Проверить расчеты по вкладу - Пополнение за 6 месяцев {value}")
     public void checkReplenishment (int value) {
-
+        Assert.assertTrue(value == formatString(replenish.getText()));
     }
 
     @Step ("Проверить расчеты по вкладу - Начислено {value}")
-    public void checkAccrued (double value) {
-
+    public void checkIncome (String value) {
+        Assert.assertEquals(value, income.getText().replaceAll("\\s",""));
     }
 }

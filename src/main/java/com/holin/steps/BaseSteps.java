@@ -2,7 +2,6 @@ package com.holin.steps;
 
 import com.holin.util.DriverManager;
 import com.holin.util.TestProperties;
-import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import org.openqa.selenium.WebDriver;
 
@@ -19,13 +18,4 @@ public class BaseSteps {
 		driver.manage().window().maximize();
 		driver.get(TestProperties.getInstance().getProperties().getProperty("app.url"));
 	}
-
-	@After
-	public void closeDriver() {
-		WebDriver driver = DriverManager.getDriver();
-		driver.quit();
-	}
-
-
-
 }

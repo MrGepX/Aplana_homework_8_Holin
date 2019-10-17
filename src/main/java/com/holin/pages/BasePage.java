@@ -42,6 +42,6 @@ public class BasePage {
 	}
 
 	public double formatString(String string) {
-		return Double.parseDouble(string.replaceAll("[^0-9]", ""));
+		return Double.parseDouble(string.replaceAll("[^0-9.,]", ""));
 	}
 }

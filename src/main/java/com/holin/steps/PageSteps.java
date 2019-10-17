@@ -34,7 +34,7 @@ public class PageSteps {
 
     @When("Срок - String \"(.*)\"")
     public void setLong(String value) {
-        //contributionsPage.setData(value);
+        contributionsPage.setData(value);
     }
 
     @When("Ежемесячное пополнение – int \"(.*)\"")
@@ -42,9 +42,14 @@ public class PageSteps {
         contributionsPage.setMonthlyPayout(payout);
     }
 
-    @When("Отметить – Ежемесячная капитализация")
-    public void capitalizationCheck() {
-        contributionsPage.checkCapitalization("Ежемесячная капитализация");
+    @When("Отметить частичное снятие – String \"(.*)\"")
+    public void withdrawalСheck(String choose) {
+        contributionsPage.clickByCheckerFunction(choose);
+    }
+
+    @When("Отметить капитализацию – String \"(.*)\"")
+    public void capitalizationCheck(String choose) {
+        contributionsPage.clickByCheckerFunction(choose);
     }
 
     @When("Проверить расчеты по вкладу - Ставка double \"(.*)\"")
@@ -52,18 +57,18 @@ public class PageSteps {
         contributionsPage.checkTheRate(rate);
     }
 
-    @When("Проверить расчеты по вкладу - К снятию через месяц double \"(.*)\"")
-    public void checkTheWithdraw (double withdraw) {
-
+    @When("Проверить расчеты по вкладу - К снятию через месяц String \"(.*)\"")
+    public void checkTheWithdraw (String withdraw) {
+        contributionsPage.checkTheWithdraw(withdraw);
     }
 
     @When("Проверить расчеты по вкладу - Пополнение за 6 месяцев int \"(.*)\"")
     public void checkReplenishment (int value) {
-
+        contributionsPage.checkReplenishment(value);
     }
 
-    @When("Проверить расчеты по вкладу - Начислено double \"(.*)\"")
-    public void checkAccrued (double value) {
-
+    @When("Проверить расчеты по вкладу - Начислено String \"(.*)\"")
+    public void checkAccrued (String value) {
+        contributionsPage.checkIncome(value);
     }
 }
