@@ -8,23 +8,19 @@ import org.openqa.selenium.WebDriver;
 
 
 public class PageSteps {
-    MainPage mainPage;
-    ContributionsPage contributionsPage;
+    MainPage mainPage = new MainPage();
+    ContributionsPage contributionsPage = new ContributionsPage();
     WebDriver driver;
 
-
-    @When("Перейти в меню – Вклады")
-    public void testCase() {
+    @When("Перейти в меню – \"(.*)\"")
+    public void testCase(String menuOption) {
         driver = DriverManager.getDriver();
-
-        mainPage = new MainPage();
-        mainPage.clickByText("Вклады");
+        mainPage.clickByText(menuOption);
     }
 
-    @When("Выбрать – Рубли")
-    public void contributionCurrency() {
-        contributionsPage = new ContributionsPage();
-        contributionsPage.chooseTypeOfCurrency();
+    @When("Выбрать валюту – \"(.*)\"")
+    public void contributionCurrency(String currency) {
+        contributionsPage.chooseTypeOfCurrency(currency);
     }
 
     @When("Сумма вклада – int \"(.*)\"")
@@ -42,12 +38,7 @@ public class PageSteps {
         contributionsPage.setMonthlyPayout(payout);
     }
 
-    @When("Отметить частичное снятие – String \"(.*)\"")
-    public void withdrawalСheck(String choose) {
-        contributionsPage.clickByCheckerFunction(choose);
-    }
-
-    @When("Отметить капитализацию – String \"(.*)\"")
+    @When("Отметить чекбокс – String \"(.*)\"")
     public void capitalizationCheck(String choose) {
         contributionsPage.clickByCheckerFunction(choose);
     }

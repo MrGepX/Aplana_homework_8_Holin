@@ -11,8 +11,8 @@ import org.openqa.selenium.support.ui.Select;
 import java.util.List;
 
 public class ContributionsPage extends BasePage {
-    @FindBy (xpath = "//span [@class='calculator__currency-field-text' and text() = 'Рубли']")
-    WebElement chooseCurrency;
+    @FindBy (xpath = "//div [@class ='calculator__currency-content']/label")
+    List <WebElement> chooseCurrency;
 
     @FindBy (xpath =  "//input[@type='text' and @name = 'amount']")
     WebElement amount;
@@ -41,10 +41,15 @@ public class ContributionsPage extends BasePage {
     @FindBy (xpath = "//span [@class='js-calc-earned']")
     WebElement income;
 
-    @Step ("Выбираем валюту")
-    public void chooseTypeOfCurrency() {
+    @Step ("Выбираем {currency}")
+    public void chooseTypeOfCurrency(String currency) {
         wait.until(ExpectedConditions.visibilityOf(accured));
-        chooseCurrency.click();
+        for (WebElement webelement: chooseCurrency) {
+            if (webelement.getText().equalsIgnoreCase(currency)) {
+                webelement.click();
+                return;
+            }
+        }
     }
 
     @Step ("Сумма вклада – {numbers}")
@@ -74,17 +79,17 @@ public class ContributionsPage extends BasePage {
         waitForChanges(accured, currentMonthValue);
     }
 
-    @Step ("Отметить – Ежемесячная капитализация")
+    @Step ("Отметить чекбокс – {nameChecker}")
     public void clickByCheckerFunction(String nameChecker) {
         setCurrentValue();
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(false);", bottom);
         for (WebElement element : checkersOnPage) {
             WebElement currentChecker = element.findElement(By.xpath(".//span[@class='calculator__check-text']"));
             if (currentChecker.getText().equalsIgnoreCase(nameChecker)) {
-                WebElement elementClick = element.findElement(By.xpath(".//span[@class=\"calculator__check-block-input\"]"));
+                WebElement elementClick = element.findElement(By.xpath(".//span[@class='calculator__check-block-input']"));
+                wait.until(ExpectedConditions.elementToBeClickable(elementClick));
+                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(false);", elementClick);
                 elementClick.click();
                 waitForChanges(accured, currentMonthValue);
-                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(false);", chooseCurrency);
                 return;
             }
         }
